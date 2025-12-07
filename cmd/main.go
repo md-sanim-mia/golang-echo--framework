@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -29,6 +32,33 @@ func getUser(c echo.Context) error {
 	return c.String(http.StatusOK, string(body))
 }
 
+func createUser(c echo.Context) error {
+
+	body, err := io.ReadAll(c.Request().Body)
+
+	fmt.Println(string(body))
+	if err != nil {
+		return c.String(http.StatusBadRequest, "invitde request")
+	}
+
+	url := "https://api.ainoviro.com/api/v1/auth/register-user"
+
+	// jsonData, _ := json.Marshal(body)
+	res, err := http.Post(url, "application/json", bytes.NewBuffer(body))
+
+	if err != nil {
+
+		return c.String(res.StatusCode, "user otp generate success full")
+	}
+
+	defer res.Body.Close()
+
+	response, _ := io.ReadAll(res.Body)
+
+	return c.String(http.StatusOK, string(response))
+}
+
+
 
 func main() {
 	e := echo.New()
@@ -42,6 +72,7 @@ func main() {
 	})
 
 	e.GET("/api/v1/users/:id", getUser)
+	e.POST("/api/v1/users/create", createUser)
 
 	e.Logger.Fatal(e.Start(":5000"))
 }
