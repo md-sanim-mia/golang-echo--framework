@@ -58,8 +58,6 @@ func createUser(c echo.Context) error {
 	return c.String(http.StatusOK, string(response))
 }
 
-
-
 func main() {
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
