@@ -48,7 +48,7 @@ func createUser(c echo.Context) error {
 
 	if err != nil {
 
-		return c.String(res.StatusCode, "user otp generate success full")
+		return c.String(res.StatusCode, "user otp generate issue")
 	}
 
 	defer res.Body.Close()
@@ -56,6 +56,29 @@ func createUser(c echo.Context) error {
 	response, _ := io.ReadAll(res.Body)
 
 	return c.String(http.StatusOK, string(response))
+}
+
+func verifyUser(c echo.Context) error {
+
+	body, err := io.ReadAll(c.Request().Body)
+
+	if err != nil {
+		return c.String(http.StatusBadRequest, "invilate otp ")
+	}
+
+	url := "https://api.ainoviro.com/api/v1/auth/register-user"
+
+	res, err := http.Post(url, "application/json", bytes.NewBuffer(body))
+
+	if err != nil {
+
+		return c.String(res.StatusCode, "send errro request send !")
+	}
+	defer res.Body.Close()
+
+	response, _ := io.ReadAll(res.Body)
+
+	return c.String(res.StatusCode, string(response))
 }
 
 func main() {
