@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/md-sanim-mia/golang-first-project/internal/config"
+	"github.com/md-sanim-mia/golang-first-project/internal/modules/users"
 )
 
 func main() {
@@ -26,7 +27,7 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middleware.BodyLimit("20M"))
 	e.Use(middleware.Secure())
-	
+
 	e.GET("/", func(c echo.Context) error {
 
 		return c.String(http.StatusOK, "Ecom project server is running!")
@@ -39,6 +40,9 @@ func main() {
 			"message": "Server is healthy",
 		})
 	})
+
+	api := e.Group("/api/v1")
+	users.UserRoutes(api, &users.UserController{})
 
 	log.Printf("🚀 Server starting on port %s", ":1323")
 	e.Logger.Fatal(e.Start(":1323"))
