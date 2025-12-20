@@ -76,7 +76,7 @@ func (c *UserController) GetsingleUserById(ctx echo.Context) error {
 func (c *UserController) UpdateUserHandler(ctx echo.Context) error {
 
 	idParam := ctx.Param("id")
-
+	var user User
 	id64, err := strconv.ParseUint(idParam, 10, 64)
 
 	if err != nil {
@@ -85,7 +85,28 @@ func (c *UserController) UpdateUserHandler(ctx echo.Context) error {
 		})
 	}
 
+	if err := ctx.Bind(&user); err != nil {
 
-	user,err:=c.Service.UpdateUser(uint(id64),)
+		return ctx.JSON(http.StatusBadRequest, echo.Map{
+
+			"message": "Invalid user id ",
+		})
+	}
+
+	updateUser, err := c.Service.UpdateUser(uint(id64), user)
+
+	if err != nil {
+
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{
+
+			"message": "filed to update user ",
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"message": "user update success fully ",
+
+		"data": updateUser,
+	})
 
 }

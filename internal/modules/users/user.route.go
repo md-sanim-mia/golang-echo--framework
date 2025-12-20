@@ -7,4 +7,5 @@ func UserRoutes(e *echo.Group, controller *UserController) {
 	e.GET("/users", controller.GetAllUsers)
 
 	e.GET("/users/:id", controller.GetsingleUserById)
+	e.PATCH("/users/:id", controller.UpdateUserHandler)
 }
