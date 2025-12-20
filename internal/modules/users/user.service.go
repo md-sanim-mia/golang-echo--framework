@@ -21,7 +21,6 @@ func (s *UserService) CreateUser(user *User) error {
 		return errors.New("database not initialized")
 	}
 
-
 	isExist := s.DB.Where("email=?", user.Email).First(&User{}).Error
 	if isExist == nil {
 		return errors.New("user already exists")
@@ -37,4 +36,50 @@ func (s *UserService) CreateUser(user *User) error {
 	user.Password = string(hashed)
 
 	return s.DB.Create(user).Error
+}
+
+func (s *UserService) GetAllUsers() ([]User, error) {
+
+	var users []User
+
+	result := s.DB.Find(&users)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return users, nil
+}
+
+func (s *UserService) GetsingleUserById(id uint) (*User, error) {
+
+	var user User
+
+	result := s.DB.First(&user, id)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, nil
+
+}
+
+func (s *UserService) UpdateUser(id uint, payload User) (*User, error) {
+
+	var user User
+
+	result := s.DB.First(&user, id)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	err := s.DB.Model(&user).Updates(payload).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
