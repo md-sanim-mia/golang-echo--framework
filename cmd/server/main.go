@@ -19,7 +19,9 @@ func main() {
 
 	config.CoonectDB()
 	defer config.CloseDB()
-
+if err := config.DB.AutoMigrate(&users.User{}); err != nil {
+	log.Fatal("❌ AutoMigrate failed:", err)
+}
 	e := echo.New()
 
 	e.Use(middleware.Logger())
@@ -40,9 +42,16 @@ func main() {
 			"message": "Server is healthy",
 		})
 	})
+userService := &users.UserService{
+	DB: config.DB, 
+}
+
+userController := &users.UserController{
+	Service: userService,
+}
 
 	api := e.Group("/api/v1")
-	users.UserRoutes(api, &users.UserController{})
+	users.UserRoutes(api, userController)
 
 	log.Printf("🚀 Server starting on port %s", ":1323")
 	e.Logger.Fatal(e.Start(":1323"))

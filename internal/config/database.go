@@ -30,6 +30,7 @@ func CoonectDB() {
 		log.Fatal("❌ Failed to get database instance:", err)
 	}
 
+		DB = db
 	pSqlDb, err := db.DB()
 	if err != nil {
 

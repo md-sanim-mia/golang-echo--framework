@@ -10,7 +10,7 @@ type UserController struct {
 	Service *UserService
 }
 
-func NewUsercontroller(service *UserService) *UserController {
+func NewUserController(service *UserService) *UserController {
 	return &UserController{Service: service}
 }
 
@@ -25,11 +25,10 @@ func (c *UserController) CreateUserHandler(ctx echo.Context) error {
 	}
 
 	if err := c.Service.CreateUser(user); err != nil {
-
 		return ctx.JSON(http.StatusInternalServerError, echo.Map{
 			"message": err.Error(),
 		})
 	}
-	return ctx.JSON(http.StatusCreated, user)
 
+	return ctx.JSON(http.StatusCreated, user)
 }

@@ -1,6 +1,8 @@
 package users
 
 import (
+	"errors"
+
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -9,17 +11,30 @@ type UserService struct {
 	DB *gorm.DB
 }
 
-func NewuserSerive(db *gorm.DB) *UserService {
+func NewUserService(db *gorm.DB) *UserService {
 	return &UserService{DB: db}
 }
 
 func (s *UserService) CreateUser(user *User) error {
-	hashed, _ := bcrypt.GenerateFromPassword(
-		[]byte(user.Password), 12,
+
+	if s.DB == nil {
+		return errors.New("database not initialized")
+	}
+
+
+	isExist := s.DB.Where("email=?", user.Email).First(&User{}).Error
+	if isExist == nil {
+		return errors.New("user already exists")
+	}
+	hashed, err := bcrypt.GenerateFromPassword(
+		[]byte(user.Password),
+		bcrypt.DefaultCost,
 	)
+	if err != nil {
+		return err
+	}
+
 	user.Password = string(hashed)
 
-	result := s.DB.Create(user).Error
-
-	return result
+	return s.DB.Create(user).Error
 }
