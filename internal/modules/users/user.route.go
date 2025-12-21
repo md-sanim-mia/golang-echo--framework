@@ -8,4 +8,6 @@ func UserRoutes(e *echo.Group, controller *UserController) {
 
 	e.GET("/users/:id", controller.GetsingleUserById)
 	e.PATCH("/users/:id", controller.UpdateUserHandler)
+
+	e.DELETE("/users/:id", controller.DeleteUserHandiler)
 }

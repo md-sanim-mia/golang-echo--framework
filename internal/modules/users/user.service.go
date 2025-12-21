@@ -2,6 +2,7 @@ package users
 
 import (
 	"errors"
+	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -82,4 +83,21 @@ func (s *UserService) UpdateUser(id uint, payload User) (*User, error) {
 	}
 
 	return &user, nil
+}
+
+func (s *UserService) DeleteUser(id uint) (*User, error) {
+	var user User
+	result := s.DB.First(&user, id)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	fmt.Println("check user id", id)
+	err := s.DB.Model(&user).Delete(id).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+
 }

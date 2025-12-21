@@ -110,3 +110,32 @@ func (c *UserController) UpdateUserHandler(ctx echo.Context) error {
 	})
 
 }
+
+func (c *UserController) DeleteUserHandiler(ctx echo.Context) error {
+	idParam := ctx.Param("id")
+
+	id64, err := strconv.ParseUint(idParam, 10, 64)
+
+	if err != nil {
+
+		return ctx.JSON(http.StatusBadRequest, echo.Map{
+
+			"message": "invlide user id ",
+		})
+	}
+
+	deletUser, err := c.Service.DeleteUser(uint(id64))
+
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{
+
+			"message": "file to delete user ",
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"message": "user delete success fully",
+		"data":    deletUser,
+	})
+
+}
