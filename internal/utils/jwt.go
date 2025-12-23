@@ -37,3 +37,28 @@ func GenerateJwtToken(userId uint, email string, role string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secret))
 }
+func ValidateToken(tokenString string) (*JWTClaims, error) {
+	secret := os.Getenv("JWT_SECRECT")
+	if secret == "" {
+		secret = "kfdskalj40r9sadfmsdaofmas"
+	}
+
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		&JWTClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(secret), nil
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*JWTClaims)
+	if !ok || !token.Valid {
+		return nil, jwt.ErrTokenInvalidClaims
+	}
+
+	return claims, nil
+}

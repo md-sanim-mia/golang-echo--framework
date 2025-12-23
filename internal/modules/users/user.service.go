@@ -84,20 +84,20 @@ func (s *UserService) UpdateUser(id uint, payload User) (*User, error) {
 
 	return &user, nil
 }
-
 func (s *UserService) DeleteUser(id uint) (*User, error) {
 	var user User
-	result := s.DB.First(&user, id)
 
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	fmt.Println("check user id", id)
-	err := s.DB.Model(&user).Delete(id).Error
-
-	if err != nil {
+	// check user exists
+	if err := s.DB.First(&user, id).Error; err != nil {
 		return nil, err
 	}
-	return &user, nil
 
+	fmt.Println("check user id", id)
+
+	// correct delete
+	if err := s.DB.Delete(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
