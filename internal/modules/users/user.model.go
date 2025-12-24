@@ -1,6 +1,9 @@
 package users
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type UserRole int
 
@@ -9,15 +12,19 @@ const (
 	ADMIN
 )
 
-func (r UserRole) MarshalJSON() ([]byte, error) {
+func (r UserRole) String() string {
 	switch r {
 	case USER:
-		return []byte(`"USER"`), nil
+		return "USER"
 	case ADMIN:
-		return []byte(`"ADMIN"`), nil
+		return "ADMIN"
 	default:
-		return []byte(`"USER"`), nil
+		return "USER"
 	}
+}
+
+func (r UserRole) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.String())
 }
 
 type User struct {

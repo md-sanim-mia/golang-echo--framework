@@ -33,7 +33,7 @@ func (c *UserController) CreateUserHandler(ctx echo.Context) error {
 		})
 	}
 
-	accessToken, err := utils.GenerateJwtToken(user.ID, user.Email, user.Role, user.FullName)
+	accessToken, err := utils.GenerateJwtToken(user.ID, user.Email, user.Role.String(), user.FullName)
 
 	if err != nil {
 		return err
