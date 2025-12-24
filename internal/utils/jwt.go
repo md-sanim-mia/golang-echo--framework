@@ -8,15 +8,14 @@ import (
 )
 
 type JWTClaims struct {
-	UserId uint `json:"user_id"`
-
-	Email string `json:"email"`
-
-	Role string `json:"role"`
+	UserId   uint   `json:"user_id"`
+	FullName string `json:"fullName"`
+	Email    string `json:"email"`
+	Role     string `json:"role"`
 	jwt.RegisteredClaims
 }
 
-func GenerateJwtToken(userId uint, email string, role string) (string, error) {
+func GenerateJwtToken(userId uint, email string, role string, fullName string) (string, error) {
 
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
@@ -24,9 +23,10 @@ func GenerateJwtToken(userId uint, email string, role string) (string, error) {
 	}
 
 	claims := JWTClaims{
-		UserId: userId,
-		Email:  email,
-		Role:   role,
+		FullName: fullName,
+		UserId:   userId,
+		Email:    email,
+		Role:     role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -37,6 +37,7 @@ func GenerateJwtToken(userId uint, email string, role string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secret))
 }
+
 func ValidateToken(tokenString string) (*JWTClaims, error) {
 	secret := os.Getenv("JWT_SECRECT")
 	if secret == "" {
@@ -62,3 +63,4 @@ func ValidateToken(tokenString string) (*JWTClaims, error) {
 
 	return claims, nil
 }
+

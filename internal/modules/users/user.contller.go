@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/md-sanim-mia/golang-first-project/internal/utils"
 )
 
 type UserController struct {
@@ -32,7 +33,19 @@ func (c *UserController) CreateUserHandler(ctx echo.Context) error {
 		})
 	}
 
-	return ctx.JSON(http.StatusCreated, user)
+	accessToken, err := utils.GenerateJwtToken(user.ID, user.Email, user.Role, user.FullName)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(accessToken)
+
+	return ctx.JSON(http.StatusCreated, echo.Map{
+		"success":     true,
+		"accessToken": accessToken,
+		"message":     "user create success fully",
+	})
 }
 
 func (c *UserController) GetAllUsers(ctx echo.Context) error {
