@@ -34,6 +34,8 @@ func (s *UserService) CreateUser(user *User) error {
 		return err
 	}
 
+	fmt.Println("hsas password", string(hashed))
+
 	user.Password = string(hashed)
 
 	return s.DB.Create(user).Error

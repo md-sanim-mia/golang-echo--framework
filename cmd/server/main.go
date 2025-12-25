@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/md-sanim-mia/golang-first-project/internal/config"
+	"github.com/md-sanim-mia/golang-first-project/internal/modules/auth"
 	"github.com/md-sanim-mia/golang-first-project/internal/modules/users"
 )
 
@@ -19,9 +20,9 @@ func main() {
 
 	config.CoonectDB()
 	defer config.CloseDB()
-if err := config.DB.AutoMigrate(&users.User{}); err != nil {
-	log.Fatal("❌ AutoMigrate failed:", err)
-}
+	if err := config.DB.AutoMigrate(&users.User{}); err != nil {
+		log.Fatal("❌ AutoMigrate failed:", err)
+	}
 	e := echo.New()
 
 	e.Use(middleware.Logger())
@@ -42,16 +43,25 @@ if err := config.DB.AutoMigrate(&users.User{}); err != nil {
 			"message": "Server is healthy",
 		})
 	})
-userService := &users.UserService{
-	DB: config.DB, 
-}
+	userService := &users.UserService{
+		DB: config.DB,
+	}
 
-userController := &users.UserController{
-	Service: userService,
-}
+	userController := &users.UserController{
+		Service: userService,
+	}
+
+	authService := &auth.AuthService{
+		DB: config.DB,
+	}
+
+	authController := auth.NewAuthController(*authService)
 
 	api := e.Group("/api/v1")
+
 	users.UserRoutes(api, userController)
+
+	auth.AuthRoute(api, authController)
 
 	log.Printf("🚀 Server starting on port %s", ":1323")
 	e.Logger.Fatal(e.Start(":1323"))
