@@ -26,15 +26,19 @@ func (s *UserService) CreateUser(user *User) error {
 	if isExist == nil {
 		return errors.New("user already exists")
 	}
+
+	fmt.Println("ORIGINAL PASSWORD BEFORE HASHING:", user.Password)
+
 	hashed, err := bcrypt.GenerateFromPassword(
 		[]byte(user.Password),
+
 		bcrypt.DefaultCost,
 	)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("hsas password", string(hashed))
+	fmt.Println("HASHED PASSWORD:", string(hashed))
 
 	user.Password = string(hashed)
 

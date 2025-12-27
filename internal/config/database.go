@@ -21,7 +21,7 @@ func CoonectDB() {
 		NowFunc: func() time.Time {
 			return time.Now().UTC()
 		},
-		PrepareStmt: true,
+		PrepareStmt: false,
 	}
 
 	db, err := gorm.Open(postgres.Open(dbPath), config)
@@ -38,7 +38,7 @@ func CoonectDB() {
 	}
 
 	pSqlDb.SetMaxIdleConns(10)
-	pSqlDb.SetMaxOpenConns(100)
+	pSqlDb.SetMaxOpenConns(5)
 	pSqlDb.SetConnMaxLifetime(time.Hour)
 
 	if err := pSqlDb.Ping(); err != nil {

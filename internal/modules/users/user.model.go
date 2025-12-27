@@ -31,7 +31,7 @@ type User struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
 	FullName  string    `gorm:"size:100;not null" json:"fullName"`
 	Email     string    `gorm:"size:100;uniqueIndex;not null" json:"email"`
-	Password  string    `gorm:"not null" json:"-"`
+	Password  string    `json:"password" validate:"required,min=6"`
 	Phone     string    `gorm:"size:20" json:"phone"`
 	Address   string    `gorm:"size:255" json:"address"`
 	Age       int       `json:"age"`

@@ -42,8 +42,8 @@ func (s AuthService) LoginUser(payload *Payload) (*LoginResponse, error) {
 		return nil, errors.New("invalid email or password !")
 
 	}
-
-	token, err := utils.GenerateJwtToken(user.ID, user.Email, user.FullName, user.Role.String())
+	fmt.Printf("check user data after login: %+v\n", user)
+	token, err := utils.GenerateJwtToken(user.ID, user.Email, user.Role.String(), user.FullName)
 
 	if err != nil {
 		return nil, err
