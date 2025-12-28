@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -40,6 +41,7 @@ func AuthMiddleware(jwtSecrect string) echo.MiddlewareFunc {
 					"error": "Invalid or expired token",
 				})
 			}
+			fmt.Println("token", tokenString)
 
 			token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (any, error) {
 
@@ -60,6 +62,8 @@ func AuthMiddleware(jwtSecrect string) echo.MiddlewareFunc {
 					"error": "Invalid token claims",
 				})
 			}
+
+			fmt.Printf("JWT Claims: %+v\n", claims)
 
 			c.Set("user_id", claims.UserID)
 			c.Set("email", claims.Email)

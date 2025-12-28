@@ -18,9 +18,6 @@ type JWTClaims struct {
 func GenerateJwtToken(userId uint, email string, role string, fullName string) (string, error) {
 
 	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "kfdskalj40r9sadfmsdaofmas"
-	}
 
 	claims := JWTClaims{
 		FullName: fullName,
@@ -63,4 +60,3 @@ func ValidateToken(tokenString string) (*JWTClaims, error) {
 
 	return claims, nil
 }
-

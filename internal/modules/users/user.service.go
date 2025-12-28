@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/labstack/echo/v4"
+	"github.com/md-sanim-mia/golang-first-project/internal/builder"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -45,17 +47,31 @@ func (s *UserService) CreateUser(user *User) error {
 	return s.DB.Create(user).Error
 }
 
-func (s *UserService) GetAllUsers() ([]User, error) {
+func (s *UserService) GetAllUsers(c echo.Context) ([]User, *builder.PaginationMeta, error) {
 
 	var users []User
 
-	result := s.DB.Find(&users)
+	qd := builder.NewQueryBuilder(s.DB, c).Model(&User{}).Search([]string{"fullName", "email"}).Filter().Sort().Paginate()
 
-	if result.Error != nil {
-		return nil, result.Error
+	// result := s.DB.Find(&users)
+
+	// if result.Error != nil {
+	// 	return nil, result.Error
+	// }
+
+	// return users, nil
+
+	if err := qd.Execute(&users); err != nil {
+		return nil, nil, err
 	}
 
-	return users, nil
+	// Get pagination meta
+	meta, err := qd.CountTotal()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return users, meta, nil
 }
 
 func (s *UserService) GetsingleUserById(id uint) (*User, error) {

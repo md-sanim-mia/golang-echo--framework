@@ -1,13 +1,21 @@
 package users
 
-import "github.com/labstack/echo/v4"
+import (
+	"os"
+
+	"github.com/labstack/echo/v4"
+	"github.com/md-sanim-mia/golang-first-project/internal/middleware"
+)
 
 func UserRoutes(e *echo.Group, controller *UserController) {
+	jwtSecret := os.Getenv("JWT_SECRET")
 	e.POST("/users", controller.CreateUserHandler)
-	e.GET("/users", controller.GetAllUsers)
 
-	e.GET("/users/:id", controller.GetsingleUserById)
-	e.PATCH("/users/:id", controller.UpdateUserHandler)
+	protected := e.Group("/users", middleware.AuthMiddleware(jwtSecret))
+	protected.GET("", controller.GetAllUsers, middleware.RoleMiddleware("USER"))
 
-	e.DELETE("/users/:id", controller.DeleteUserHandiler)
+	protected.GET("/:id", controller.GetsingleUserById)
+	protected.PATCH("/:id", controller.UpdateUserHandler)
+
+	protected.DELETE("/:id", controller.DeleteUserHandiler)
 }

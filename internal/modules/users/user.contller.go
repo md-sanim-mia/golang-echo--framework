@@ -50,7 +50,9 @@ func (c *UserController) CreateUserHandler(ctx echo.Context) error {
 
 func (c *UserController) GetAllUsers(ctx echo.Context) error {
 
-	users, err := c.Service.GetAllUsers()
+	users, meta, err := c.Service.GetAllUsers(ctx)
+	userID := ctx.Get("user_id") // interface{}
+	fmt.Println("check the id .............", userID)
 
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, echo.Map{
@@ -59,7 +61,14 @@ func (c *UserController) GetAllUsers(ctx echo.Context) error {
 		})
 	}
 
-	return ctx.JSON(http.StatusOK, users)
+	return ctx.JSON(http.StatusOK, echo.Map{
+
+		"success": true,
+
+		"message": "get all user seccess fully ",
+		"data":    users,
+		"meta":    meta,
+	})
 
 }
 
