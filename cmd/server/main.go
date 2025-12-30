@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/md-sanim-mia/golang-first-project/internal/config"
 	"github.com/md-sanim-mia/golang-first-project/internal/modules/auth"
+	"github.com/md-sanim-mia/golang-first-project/internal/modules/product"
 	"github.com/md-sanim-mia/golang-first-project/internal/modules/users"
 )
 
@@ -57,11 +58,20 @@ func main() {
 
 	authController := auth.NewAuthController(*authService)
 
+	productService := &product.ProductService{
+		DB: config.DB,
+	}
+
+	productContller := &product.ProductContller{
+		Service: productService,
+	}
+
 	api := e.Group("/api/v1")
 
 	users.UserRoutes(api, userController)
 
 	auth.AuthRoute(api, authController)
+	product.ProudctRoute(api, productContller)
 
 	log.Printf("🚀 Server starting on port %s", ":1323")
 	e.Logger.Fatal(e.Start(":1323"))
